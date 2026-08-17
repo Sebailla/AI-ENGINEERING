@@ -1,0 +1,9 @@
+# Local agent registries and generated indexes
+.atl/
+.codegraph/
+
+# Local machine metadata
+.DS_Store
+
+# Conversation handoff retained locally, not part of the reusable base
+AI-ENGINEERING-BASE-HANDOFF.md
