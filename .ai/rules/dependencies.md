@@ -20,6 +20,7 @@ Una dependencia es una decisión de arquitectura, seguridad y mantenimiento. Deb
 | Seguridad de cadena de suministro | Evaluar procedencia, mantenimiento, licencia, vulnerabilidades y scripts de instalación. |
 | Reproducibilidad | Mantener manifest, lockfile, checksum y toolchain coherentes; no regenerarlos sin entender el impacto. |
 | Removibilidad | Conocer cómo aislar o reemplazar una dependencia antes de extenderla por todo el sistema. |
+| Ecosistema Node.js | Usar pnpm como manejador canónico de paquetes y dependencias de JavaScript/TypeScript. |
 
 ## Evaluación antes de agregar
 
@@ -44,6 +45,17 @@ Para una dependencia de desarrollo, aplicar el mismo criterio de seguridad y rep
 - No actualizar transitive dependencies de forma manual salvo que el ecosistema lo requiera y el resultado pueda verificarse.
 
 `latest` significa “última publicada”, no “adecuada para este proyecto”.
+
+## Ecosistema Node.js: pnpm
+
+Para proyectos Node.js, JavaScript o TypeScript que adopten esta base, **pnpm es el manejador canónico de paquetes y dependencias**. Esta decisión no se extiende a otros ecosistemas: SwiftPM, Cargo, Go modules, Poetry, uv u otros gestores se seleccionan según su plataforma.
+
+- Usar `pnpm install`, `pnpm add`, `pnpm remove`, `pnpm update` y `pnpm run`; no mezclar npm, Yarn o Bun para modificar dependencias del mismo proyecto.
+- Versionar `package.json` y `pnpm-lock.yaml`; nunca ignorar, editar manualmente ni regenerar el lockfile sin entender el cambio resultante.
+- Declarar el gestor y su versión compatible mediante el campo `packageManager` de `package.json` cuando el proyecto lo soporte.
+- Preferir Corepack o el mecanismo de distribución aprobado por el proyecto para obtener la versión declarada de pnpm.
+- En workspaces, usar `pnpm-workspace.yaml` y filtros de pnpm en lugar de scripts que recorran paquetes manualmente.
+- Si un proyecto existente usa otro gestor, no migrarlo silenciosamente: evaluar lockfile, CI, tooling, workspaces y coste de migración; pedir confirmación antes de cambiarlo.
 
 ## Instalación segura
 
