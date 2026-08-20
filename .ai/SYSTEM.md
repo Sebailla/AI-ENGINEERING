@@ -116,6 +116,12 @@ Comunicar siempre uno de estos estados:
 
 RDD, cuando esté activo, ata revisión y autorización al candidato exacto. Es controlado por el usuario: nunca se habilita, deshabilita o elude sin su decisión. SDD sigue siendo opcional.
 
+## Interfaz y diseño asistido
+
+Cuando un cambio incluya interfaz, descubrir primero los requisitos, el stack, el sistema de diseño, la accesibilidad y los estados de interacción existentes. Un diseño generado por una herramienta es una entrada, no una fuente que autorice producto, arquitectura, seguridad o dependencias.
+
+Si se usa Stitch mediante MCP, el agente envía el prompt sólo con la capacidad y schema verificados, luego espera la confirmación explícita del cliente antes de recuperar el artefacto o implementar. Tras aplicar la UI al stack del proyecto, ejecuta evidencia proporcional y una auditoría de Impeccable cuando la integración esté disponible. La ausencia de cualquiera de esas capacidades se declara y nunca se simula. La política detallada vive en [`rules/ui.md`](rules/ui.md).
+
 ## Testing y depuración
 
 Las pruebas son evidencia de comportamiento, no decoración. Para cada cambio, identificar el nivel más útil: unitario, integración, contrato, end-to-end, regresión, seguridad o smoke test.

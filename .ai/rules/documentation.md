@@ -130,3 +130,4 @@ Cuando una conversación produce una decisión significativa, convertirla en el 
 - [`context.md`](context.md): distingue handoffs de documentación persistente.
 - [`git.md`](git.md): versiona documentación con los cambios que explica.
 - [`security.md`](security.md): protege contenido sensible en documentación y ejemplos.
+- [`ui.md`](ui.md): documenta decisiones, flujos y evidencia de interfaz cuando corresponda.

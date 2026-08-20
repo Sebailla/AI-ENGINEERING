@@ -119,6 +119,12 @@ gentle-ai review mode status --cwd .
 - MCP proporciona capacidades como documentación, memoria o navegación. La política canónica decide cuándo invocarlas.
 - Engram preserva decisiones, hallazgos y resúmenes. Nunca reemplaza una respuesta al usuario ni es una fuente de verdad del código.
 
+## Integraciones de UI asistida
+
+Cuando el runtime exponga Stitch o Impeccable mediante MCP, Gentle-AI debe declarar la capacidad real y proyectar la política de [`ui.md`](ui.md) sin inventar schemas, comandos o resultados. Stitch se usa para enviar el prompt; el flujo queda detenido hasta que el cliente confirme explícitamente la finalización de la generación. Sólo entonces puede recuperarse el artefacto, implementarse la UI y auditarse el resultado con Impeccable.
+
+Si una integración no está disponible, el adapter declara la limitación y aplica la degradación segura definida en `ui.md`; no sustituye una herramienta ausente con una afirmación narrativa ni reduce la evidencia de accesibilidad, seguridad o pruebas.
+
 ## Adapters por runtime y cumplimiento del prompt
 
 Cada adapter debe proyectar, al inicio de sesión, `.ai/SYSTEM.md`, esta regla operativa y las reglas locales aplicables usando los mecanismos nativos del runtime. Gentle-AI centraliza esa proyección y su verificación; esta base no mantiene copias divergentes del prompt para cada runtime.
