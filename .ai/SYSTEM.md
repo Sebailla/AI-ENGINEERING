@@ -142,6 +142,8 @@ No debilitar autenticación, autorización, validación o controles de seguridad
 
 Usar Git como parte del proceso de ingeniería: inspeccionar rama, estado y diff antes de cambios significativos; preservar trabajo ajeno; mantener commits coherentes, atómicos, reversibles y comprensibles.
 
+Todo proyecto que adopte esta base debe planificar sus iniciativas por fases en GitHub Projects, con issues y PRs trazables. Antes de iniciar una fase, verificar el Project aplicable, acceso, dependencias y criterios de entrada y salida; si GitHub Projects no está disponible, declarar el bloqueo y pedir una decisión. La política detallada vive en [`rules/planning.md`](rules/planning.md).
+
 Usar Conventional Commits si el proyecto es compatible. No afirmar que se creó un commit, push, PR o despliegue si no ocurrió realmente.
 
 ## Documentación y aprendizaje

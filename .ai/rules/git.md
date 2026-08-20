@@ -4,12 +4,13 @@ Git preserva intención, evidencia y reversibilidad. Worktrees, commits, issues,
 
 ## Ruta rápida
 
-1. Descubrí repositorio, rama, estado, remotos y reglas de contribución antes de modificar.
-2. Aislá el trabajo cuando haya cambios paralelos mediante un worktree seguro.
-3. Implementá unidades de trabajo pequeñas con pruebas y documentación pertinentes.
-4. Usá commits convencionales, coherentes y reversibles.
-5. Abrí issues y PRs según la política real del repositorio, con evidencia y alcance claro.
-6. Publicá releases sólo desde un candidato verificado, versionado y con rollback posible.
+1. Descubrir repositorio, rama, estado, remotos, reglas de contribución y GitHub Project aplicable antes de modificar.
+2. Planificar toda iniciativa en fases e issues trazables dentro de GitHub Projects.
+3. Aislar el trabajo cuando haya cambios paralelos mediante un worktree seguro.
+4. Implementar unidades de trabajo pequeñas con pruebas y documentación pertinentes.
+5. Usar commits convencionales, coherentes y reversibles.
+6. Abrir issues y PRs según la política real del repositorio, con evidencia y alcance claro.
+7. Publicar releases sólo desde un candidato verificado, versionado y con rollback posible.
 
 ## Invariantes
 
@@ -20,6 +21,7 @@ Git preserva intención, evidencia y reversibilidad. Worktrees, commits, issues,
 | Unidad de trabajo | Un commit debe representar un comportamiento, corrección, migración o documentación revisable. |
 | Evidencia | Tests, CI, reviews, tags y releases se informan sólo cuando fueron verificados. |
 | Política del repositorio | Templates, labels, approvals, protecciones y versionado se descubren; no se inventan. |
+| Planificación | Toda iniciativa se planifica por fases en GitHub Projects y se descompone en issues trazables antes de iniciar cada fase. |
 | Reversibilidad | Cada entrega debe tener un límite claro de rollback sin eliminar trabajo no relacionado. |
 
 ## Descubrimiento inicial
@@ -83,6 +85,14 @@ Reglas:
 - No mezclar secretos, artefactos locales, lockfiles accidentales ni cambios ajenos.
 
 Antes de crear un commit, confirmar propósito, prueba enfocada, evidencia disponible y límite de rollback.
+
+## Planificación por fases y GitHub Projects
+
+GitHub Projects es la fuente de seguimiento para la planificación de iniciativas. Antes de iniciar una iniciativa o una fase, descubrir el Project aplicable, permisos y convenciones de la organización; descomponer el trabajo en fases e issues trazables; y definir para cada fase su entrada, salida, dependencias y ownership.
+
+El Project enlaza issues y PRs, sin duplicar el detalle técnico, la discusión o la evidencia que pertenecen a esos artefactos. Actualizar estados, bloqueos y riesgos sólo con evidencia real. No imponer labels, campos, vistas, automatizaciones ni estructuras de Project: deben descubrirse en cada organización.
+
+Si GitHub Projects no está disponible o no existe acceso, declarar el bloqueo y pedir una decisión; no simular la planificación en fuentes paralelas. La política detallada está en [`planning.md`](planning.md). Esta planificación organiza el trabajo pero no cambia las rutas directa, delegada o SDD opcional, ni el control opt-in de RDD.
 
 ## Issues
 
@@ -148,6 +158,8 @@ Registrar qué versión, commit, artefacto o configuración se revierte y cómo 
 - [ ] El worktree, si existe, es aislado, limpio y tiene su índice CodeGraph propio.
 - [ ] La rama y el commit representan una única unidad de trabajo reversible.
 - [ ] Tests, documentación y migraciones relevantes acompañan la unidad correcta.
+- [ ] La iniciativa está planificada en fases e issues trazables dentro del GitHub Project aplicable, o el bloqueo fue declarado.
+- [ ] Cada fase iniciada tiene criterios de entrada y salida, dependencias y ownership conocidos.
 - [ ] Issues y PRs respetan políticas, templates, labels, privacidad y aprobación reales.
 - [ ] La PR está enfocada o posee una estrategia explícita de slices/chain.
 - [ ] La release, si aplica, está vinculada al SHA, CI y artefactos exactos.
@@ -157,3 +169,4 @@ Registrar qué versión, commit, artefacto o configuración se revierte y cómo 
 - [`../SYSTEM.md`](../SYSTEM.md): define evidencia, seguridad y completitud.
 - [`testing.md`](testing.md): ejecuta la verificación funcional que acompaña commits y PRs.
 - [`gentle-ai.md`](gentle-ai.md): coordina RDD, review y delivery cuando estén disponibles.
+- [`planning.md`](planning.md): define la planificación obligatoria por fases en GitHub Projects.
