@@ -46,6 +46,19 @@ Claude Code ofrece subagentes nativos mediante `Task`, cada uno con una ventana 
 - Si `Task` o la delegación nativa no están disponibles, continuá en modo individual sin disminuir requisitos de seguridad, evidencia ni verificación.
 - Delegar no activa SDD automáticamente; SDD requiere solicitud explícita o aceptación.
 
+## Puente operativo de interfaz asistida
+
+Cuando el trabajo incluya interfaz, este runtime debe aplicar [`../rules/ui.md`](../rules/ui.md) sin asumir que Stitch o Impeccable están configurados. La disponibilidad, el nombre de la herramienta MCP, su schema y el método de recuperación se verifican en la sesión actual antes de usarlos.
+
+1. Verificar que el MCP de Stitch y su operación para enviar el prompt estén disponibles; si no lo están, declarar la generación asistida como `BLOQUEADO`.
+2. Enviar el prompt únicamente mediante la capacidad y el schema verificados. No inventar comandos, parámetros, identificadores ni formatos.
+3. Detenerse y esperar que el cliente confirme explícitamente que la generación solicitada terminó. No hacer polling, recuperar, implementar ni iniciar la auditoría antes de esa confirmación.
+4. Después de la confirmación, recuperar el artefacto sólo mediante una operación disponible. Si no se puede recuperar, solicitar enlace, exportación o adjunto autorizado; declarar el límite y no reconstruirlo como si fuera verificable.
+5. Aplicar la UI al stack, sistema de diseño, accesibilidad y pruebas existentes del proyecto.
+6. Verificar que Impeccable puede auditar el destino implementado. Ejecutar la auditoría sólo con su capacidad real; resolver los hallazgos relevantes o declararlos. Si no está disponible, informar `NO VERIFICADO` o `BLOQUEADO` sin simular la auditoría.
+
+La confirmación del cliente habilita la recuperación, pero no demuestra por sí sola que el artefacto sea accesible ni que la implementación satisfaga requisitos funcionales o de accesibilidad.
+
 ## RDD y evidencia
 
 RDD es controlado por el usuario. Si está activo, la revisión y la autorización se vinculan al candidato exacto; ningún subagente puede fabricar, reutilizar o eludir receipts.
