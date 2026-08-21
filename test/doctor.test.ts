@@ -34,6 +34,18 @@ test("doctor reports structured, honest checks", async () => {
   }
 });
 
+test("doctor detects the workspace-scoped Gentle-AI OpenCode adapter", async () => {
+  const root = await createProject();
+  try {
+    await mkdir(join(root, ".config", "opencode"), { recursive: true });
+    await writeFile(join(root, ".config", "opencode", "opencode.json"), "{}\n");
+    const result = await doctor({ cwd: root });
+    assert.equal(result.checks.find((check) => check.id === "runtime.opencode")?.status, "VERIFICADO");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("compiled CLI emits doctor JSON", async () => {
   const root = await createProject();
   try {
