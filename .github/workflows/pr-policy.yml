@@ -16,12 +16,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          EVENT_PATH: ${{ github.event_path }}
         run: |
           node <<'NODE'
           const fs = require('node:fs');
           const https = require('node:https');
-          const event = JSON.parse(fs.readFileSync(process.env.EVENT_PATH, 'utf8'));
+          const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
           const pull = event.pull_request;
           const body = pull.body || '';
           const matches = [...body.matchAll(/\b(?:closes|fixes|resolves)\s+#(\d+)\b/gi)];
