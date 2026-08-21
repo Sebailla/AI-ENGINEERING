@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 import { init } from "./commands/init.js";
+import { doctor } from "./commands/doctor.js";
 
 function usage(): string {
-  return "Usage: ai-engineering init [--cwd <project>] [--runtime <name>]... [--dry-run] [--force] [--format text|json]";
+  return "Usage: ai-engineering init|doctor [--cwd <project>] [--runtime <name>]... [--dry-run] [--force] [--format text|json]";
 }
 
 async function main(): Promise<void> {
   const [command, ...arguments_] = process.argv.slice(2);
-  if (command !== "init") throw new Error(usage());
+  if (command !== "init" && command !== "doctor") throw new Error(usage());
 
   const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, force: false, format: "text" };
   for (let index = 0; index < arguments_.length; index += 1) {
@@ -19,6 +20,17 @@ async function main(): Promise<void> {
     else if (argument === "--force") options.force = true;
     else if (argument === "--format" && (value === "text" || value === "json")) { options.format = value; index += 1; }
     else throw new Error(`Unknown or incomplete argument: ${argument}`);
+  }
+
+  if (command === "doctor") {
+    const report = await doctor({ cwd: options.cwd });
+    if (options.format === "json") console.log(JSON.stringify(report));
+    else {
+      console.log(`doctor: ${report.complete ? "complete" : "incomplete"}`);
+      for (const check of report.checks) console.log(`${check.status}: ${check.id} — ${check.evidence}`);
+    }
+    if (!report.complete) process.exitCode = 2;
+    return;
   }
 
   const report = await init(options);
