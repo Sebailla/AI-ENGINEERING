@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+import { init } from "./commands/init.js";
+
+function usage(): string {
+  return "Usage: ai-engineering init [--cwd <project>] [--runtime <name>]... [--dry-run] [--force] [--format text|json]";
+}
+
+async function main(): Promise<void> {
+  const [command, ...arguments_] = process.argv.slice(2);
+  if (command !== "init") throw new Error(usage());
+
+  const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, force: false, format: "text" };
+  for (let index = 0; index < arguments_.length; index += 1) {
+    const argument = arguments_[index];
+    const value = arguments_[index + 1];
+    if (argument === "--cwd" && value) { options.cwd = value; index += 1; }
+    else if (argument === "--runtime" && value) { options.runtimes.push(value); index += 1; }
+    else if (argument === "--dry-run") options.dryRun = true;
+    else if (argument === "--force") options.force = true;
+    else if (argument === "--format" && (value === "text" || value === "json")) { options.format = value; index += 1; }
+    else throw new Error(`Unknown or incomplete argument: ${argument}`);
+  }
+
+  const report = await init(options);
+  if (options.format === "json") console.log(JSON.stringify(report));
+  else {
+    console.log(`init: ${report.complete ? "complete" : "incomplete"}${report.dryRun ? " (dry run)" : ""}`);
+    for (const entry of report.entries) console.log(`${entry.action}: ${entry.path} — ${entry.reason}`);
+    for (const warning of report.warnings) console.log(`warning: ${warning}`);
+  }
+  if (!report.complete) process.exitCode = 2;
+}
+
+main().catch((error: unknown) => {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exitCode = 1;
+});
