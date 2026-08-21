@@ -6,6 +6,7 @@ export interface ConformanceCase {
   command: string;
   evidence: string;
   remediation: string;
+  source?: "local-command" | "runtime-observation" | "external";
 }
 
 export interface ConformanceReport {
@@ -16,6 +17,6 @@ export interface ConformanceReport {
   externalBlockers: string[];
 }
 
-export function conformanceCase(id: string, status: CheckStatus, command: string, evidence: string, remediation: string): ConformanceCase {
-  return { id, status, command, evidence, remediation };
+export function conformanceCase(id: string, status: CheckStatus, command: string, evidence: string, remediation: string, source: ConformanceCase["source"] = "local-command"): ConformanceCase {
+  return { id, status, command, evidence, remediation, source };
 }
