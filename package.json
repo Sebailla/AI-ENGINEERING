@@ -1,0 +1,17 @@
+{
+  "name": "@sebailla/ai-engineering",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Portable bootstrap harness for AI engineering projects",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "pnpm run build && node --test dist/test/*.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
+  },
+  "packageManager": "pnpm@10.15.0"
+}

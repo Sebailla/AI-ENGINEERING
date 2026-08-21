@@ -11,3 +11,7 @@
 
 # Conversation handoff retained locally, not part of the reusable base
 AI-ENGINEERING-BASE-HANDOFF.md
+
+node_modules/
+dist/
+test/fixtures/project-*/
