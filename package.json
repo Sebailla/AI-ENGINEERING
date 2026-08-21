@@ -4,6 +4,7 @@
   "private": true,
   "description": "Portable bootstrap harness for AI engineering projects",
   "type": "module",
+  "files": ["dist", "templates"],
   "bin": {
     "ai-engineering": "dist/src/cli.js"
   },
