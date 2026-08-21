@@ -41,7 +41,9 @@ export async function discoverProject(root: string): Promise<import("./types.js"
   const detectedRuntimes: import("./types.js").Runtime[] = [];
   if (await exists(".codex")) detectedRuntimes.push("codex");
   if (await exists("CLAUDE.md") || await exists(".claude")) detectedRuntimes.push("claude-code");
-  if (await exists("opencode.json") || await exists(".opencode")) detectedRuntimes.push("opencode");
+  // Gentle-AI's workspace-scoped OpenCode adapter is intentionally kept under
+  // .config/opencode; also accept the runtime's native project locations.
+  if (await exists("opencode.json") || await exists(".opencode") || await exists(".config/opencode/opencode.json")) detectedRuntimes.push("opencode");
   if (await exists(".pi")) detectedRuntimes.push("pi");
   return {
     git: await exists(".git"),

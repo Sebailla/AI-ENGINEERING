@@ -1,0 +1,12 @@
+{
+  "harnessVersion": "0.1.0",
+  "runtimes": [
+    "claude-code",
+    "codex",
+    "opencode",
+    "pi"
+  ],
+  "schemaVersion": 1,
+  "stateDigest": "eb6ac3132ae7287a36fa48653d962a6ff0f244e1b6f3b6bc81aa88b16336c083",
+  "templates": []
+}

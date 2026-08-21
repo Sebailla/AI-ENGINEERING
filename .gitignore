@@ -9,6 +9,11 @@
 .claude/settings.local.json
 .codex/hooks.json
 
+# Gentle-AI workspace adapters are managed/generated assets. Recreate them with
+# `gentle-ai install --scope=workspace` instead of committing machine state.
+.config/opencode/
+.pi/
+
 # Conversation handoff retained locally, not part of the reusable base
 AI-ENGINEERING-BASE-HANDOFF.md
 
