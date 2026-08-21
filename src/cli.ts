@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 import { init } from "./commands/init.js";
 import { doctor } from "./commands/doctor.js";
+import { conformance } from "./commands/conformance.js";
 
 function usage(): string {
-  return "Usage: ai-engineering init|doctor [--cwd <project>] [--runtime <name>]... [--dry-run] [--force] [--format text|json]";
+  return "Usage: ai-engineering init|doctor|conformance [--cwd <project>] [--runtime <name>]... [--dry-run] [--force] [--format text|json]";
 }
 
 async function main(): Promise<void> {
   const [command, ...arguments_] = process.argv.slice(2);
-  if (command !== "init" && command !== "doctor") throw new Error(usage());
+  if (command !== "init" && command !== "doctor" && command !== "conformance") throw new Error(usage());
 
   const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, force: false, format: "text" };
   for (let index = 0; index < arguments_.length; index += 1) {
@@ -28,6 +29,18 @@ async function main(): Promise<void> {
     else {
       console.log(`doctor: ${report.complete ? "complete" : "incomplete"}`);
       for (const check of report.checks) console.log(`${check.status}: ${check.id} — ${check.evidence}`);
+    }
+    if (!report.complete) process.exitCode = 2;
+    return;
+  }
+
+  if (command === "conformance") {
+    const report = await conformance({ cwd: options.cwd });
+    if (options.format === "json") console.log(JSON.stringify(report));
+    else {
+      console.log(`conformance: ${report.complete ? "complete" : "incomplete"}`);
+      for (const item of report.cases) console.log(`${item.status}: ${item.id} — ${item.evidence}`);
+      for (const blocker of report.externalBlockers) console.log(`blocker: ${blocker}`);
     }
     if (!report.complete) process.exitCode = 2;
     return;
