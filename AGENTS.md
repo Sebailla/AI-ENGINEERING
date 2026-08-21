@@ -2,6 +2,13 @@
 
 Este archivo inicia la política de esta base. **Gentle-AI es el orquestador operativo obligatorio**: antes de ejecutar, delegar o modificar trabajo, debe cargar y hacer cumplir las fuentes canónicas siguientes.
 
+## Seguimiento de este repositorio
+
+El hub canónico de planificación de GitHub para este repositorio es:
+<https://github.com/Sebailla/AI-ENGINEERING/projects>
+
+Usá ese enlace para consultar los Projects del repositorio; no sustituyas su ubicación por un Project personal o por una URL local.
+
 ## Carga obligatoria
 
 1. [`.ai/SYSTEM.md`](.ai/SYSTEM.md): constitución universal; define qué estándares de ingeniería se aplican.
