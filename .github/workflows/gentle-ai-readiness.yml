@@ -1,0 +1,35 @@
+name: gentle-ai-readiness
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Inspect Gentle-AI without mutation
+        shell: bash
+        run: |
+          set +e
+          if ! command -v gentle-ai >/dev/null 2>&1; then
+            echo "### Gentle-AI readiness: NO_VERIFICADO" >> "$GITHUB_STEP_SUMMARY"
+            echo "gentle-ai is not installed on this runner; no readiness claim was made." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          status=0
+          gentle-ai version || status=1
+          gentle-ai sync --dry-run || status=1
+          gentle-ai doctor || status=1
+          if [ "$status" -ne 0 ]; then
+            echo "### Gentle-AI readiness: NO_VERIFICADO" >> "$GITHUB_STEP_SUMMARY"
+            echo "The read-only diagnostic reported external or runtime blockers (exit $status)." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### Gentle-AI readiness: VERIFICADO" >> "$GITHUB_STEP_SUMMARY"
+            echo "Version, sync plan and doctor completed without a failure." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 0
