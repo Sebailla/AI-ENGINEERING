@@ -1,0 +1,31 @@
+name: quality
+
+on:
+  pull_request:
+  push:
+    branches: [feat/p0-harness-bootstrap]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.0 --activate
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        run: pnpm test
+      - name: Validate package contents
+        run: |
+          mkdir -p "$RUNNER_TEMP/ai-engineering-pack"
+          pnpm pack --pack-destination "$RUNNER_TEMP/ai-engineering-pack" --json > "$RUNNER_TEMP/ai-engineering-pack/metadata.json"
+          node -e 'const fs = require("node:fs"); const metadata = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/ai-engineering-pack/metadata.json", "utf8")); if (!metadata.filename || !metadata.files.some((file) => file.path === "dist/src/cli.js")) process.exit(1); console.log(`validated ${metadata.filename}`);'
