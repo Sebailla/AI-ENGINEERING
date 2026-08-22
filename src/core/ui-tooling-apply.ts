@@ -1,4 +1,4 @@
-import { planUiTooling } from "./ui-tooling.js";
+import { IMPECCABLE_INSTALL_COMMAND, IMPECCABLE_VERSION, planUiTooling } from "./ui-tooling.js";
 import { UiToolingApplyReport, UiToolingProfile, UiToolingReceipt } from "./types.js";
 
 export interface UiToolingCommandExecutor {
@@ -16,10 +16,10 @@ export async function applyUiTooling(profile: UiToolingProfile, cwd: string, con
       continue;
     }
     try {
-      const result = await execute("npx", ["impeccable", "install", "--scope=project"], cwd);
-      receipts.push({ id: step.id, command: "npx impeccable install --scope=project", status: result.exitCode === 0 ? "APPLIED" : "FAILED", verification: "NO_VERIFICADO", evidence: redact(`${result.stdout}\n${result.stderr}`) });
+      const result = await execute("npx", [`impeccable@${IMPECCABLE_VERSION}`, "install", "--scope=project"], cwd);
+      receipts.push({ id: step.id, command: IMPECCABLE_INSTALL_COMMAND, status: result.exitCode === 0 ? "APPLIED" : "FAILED", verification: "NO_VERIFICADO", evidence: redact(`${result.stdout}\n${result.stderr}`) });
     } catch (error) {
-      receipts.push({ id: step.id, command: "npx impeccable install --scope=project", status: "FAILED", verification: "NO_VERIFICADO", evidence: redact(error instanceof Error ? error.message : String(error)) });
+      receipts.push({ id: step.id, command: IMPECCABLE_INSTALL_COMMAND, status: "FAILED", verification: "NO_VERIFICADO", evidence: redact(error instanceof Error ? error.message : String(error)) });
     }
   }
   return { profile, confirmed: true, complete: receipts.every((receipt) => receipt.status === "APPLIED" || receipt.status === "BLOCKED"), receipts, fallback: plan.fallback };

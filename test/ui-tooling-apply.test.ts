@@ -13,7 +13,7 @@ test("apply requires explicit confirmation", async () => {
 test("Impeccable apply is injectable and remains unverified", async () => {
   const report = await applyUiTooling("impeccable", "/project", true, async (command, args, cwd) => {
     assert.equal(command, "npx");
-    assert.deepEqual(args, ["impeccable", "install", "--scope=project"]);
+    assert.deepEqual(args, ["impeccable@4.1.1", "install", "--scope=project"]);
     assert.equal(cwd, "/project");
     return { stdout: "installed", stderr: "", exitCode: 0 };
   });

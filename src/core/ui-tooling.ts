@@ -1,5 +1,8 @@
 import { UiToolingPlan, UiToolingProfile, UiToolingStep } from "./types.js";
 
+export const IMPECCABLE_VERSION = "4.1.1";
+export const IMPECCABLE_INSTALL_COMMAND = `npx impeccable@${IMPECCABLE_VERSION} install --scope=project`;
+
 const profiles: Record<UiToolingProfile, Array<"impeccable" | "stitch">> = {
   manual: [],
   impeccable: ["impeccable"],
@@ -18,7 +21,7 @@ function stepFor(id: "impeccable" | "stitch", environment: NodeJS.ProcessEnv): U
       id,
       action: "external",
       owner: "external",
-      command: "npx impeccable install --scope=project",
+      command: IMPECCABLE_INSTALL_COMMAND,
       requiredEnv: [],
       verification: "NO_VERIFICADO",
       reason: "The external skill installer is planned but is not executed by harness init.",

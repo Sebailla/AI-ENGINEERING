@@ -9,7 +9,7 @@ test("manual UI tooling is the safe default", () => {
 test("Impeccable remains an explicit external install", () => {
   const plan = planUiTooling("impeccable");
   assert.equal(plan.steps[0]?.action, "external");
-  assert.equal(plan.steps[0]?.command, "npx impeccable install --scope=project");
+  assert.equal(plan.steps[0]?.command, "npx impeccable@4.1.1 install --scope=project");
   assert.equal(plan.steps[0]?.verification, "NO_VERIFICADO");
 });
 
