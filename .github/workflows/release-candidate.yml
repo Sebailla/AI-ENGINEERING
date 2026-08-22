@@ -56,7 +56,7 @@ jobs:
           pnpm pack --pack-destination "$RUNNER_TEMP/release-candidate" --json > "$RUNNER_TEMP/release-candidate/metadata.json"
           tarball=$(find "$RUNNER_TEMP/release-candidate" -maxdepth 1 -name '*.tgz' -print -quit)
           test -n "$tarball"
-          sha256sum "$tarball" | tee "$RUNNER_TEMP/release-candidate/SHA256SUMS"
+          (cd "$RUNNER_TEMP/release-candidate" && sha256sum "$(basename "$tarball")" | tee SHA256SUMS)
           echo "### Release candidate: VERIFICADO" >> "$GITHUB_STEP_SUMMARY"
           echo "Candidate tarball and SHA-256 digest prepared; no registry publication was attempted." >> "$GITHUB_STEP_SUMMARY"
 
@@ -66,4 +66,3 @@ jobs:
           name: release-candidate-${{ inputs.expected_version }}
           path: ${{ runner.temp }}/release-candidate/
           if-no-files-found: error
-
