@@ -3,14 +3,15 @@ import { init } from "./commands/init.js";
 import { doctor } from "./commands/doctor.js";
 import { conformance } from "./commands/conformance.js";
 import { packageAudit } from "./commands/package-audit.js";
+import { releaseCheck } from "./commands/release-check.js";
 
 function usage(): string {
-  return "Usage: ai-engineering init|doctor|conformance|package-audit [--cwd <project>] [--runtime <name>]... [--dry-run] [--force] [--format text|json]";
+  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check [--cwd <project>] [--runtime <name>]... [--dry-run] [--force] [--format text|json]";
 }
 
 async function main(): Promise<void> {
   const [command, ...arguments_] = process.argv.slice(2);
-  if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit") throw new Error(usage());
+  if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit" && command !== "release-check") throw new Error(usage());
 
   const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, force: false, format: "text" };
   for (let index = 0; index < arguments_.length; index += 1) {
@@ -53,6 +54,17 @@ async function main(): Promise<void> {
     else {
       console.log(`package-audit: ${report.complete ? "complete" : "incomplete"}`);
       for (const file of report.files) console.log(`file: ${file}`);
+      for (const error of report.errors) console.log(`error: ${error}`);
+    }
+    if (!report.complete) process.exitCode = 2;
+    return;
+  }
+
+  if (command === "release-check") {
+    const report = await releaseCheck(options.cwd);
+    if (options.format === "json") console.log(JSON.stringify(report));
+    else {
+      console.log(`release-check: ${report.complete ? "complete" : "incomplete"} (${report.version})`);
       for (const error of report.errors) console.log(`error: ${error}`);
     }
     if (!report.complete) process.exitCode = 2;

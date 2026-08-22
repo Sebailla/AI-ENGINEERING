@@ -29,3 +29,5 @@ jobs:
           mkdir -p "$RUNNER_TEMP/ai-engineering-pack"
           pnpm pack --pack-destination "$RUNNER_TEMP/ai-engineering-pack" --json > "$RUNNER_TEMP/ai-engineering-pack/metadata.json"
           node -e 'const fs = require("node:fs"); const metadata = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/ai-engineering-pack/metadata.json", "utf8")); if (!metadata.filename || !metadata.files.some((file) => file.path === "dist/src/cli.js")) process.exit(1); console.log(`validated ${metadata.filename}`);'
+      - name: Validate release metadata
+        run: pnpm release:check
