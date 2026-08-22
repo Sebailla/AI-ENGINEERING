@@ -12,7 +12,8 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "pnpm run build && node --test dist/test/*.test.js",
-    "package:audit": "pnpm run build && node dist/src/cli.js package-audit --format json"
+    "package:audit": "pnpm run build && node dist/src/cli.js package-audit --format json",
+    "release:check": "pnpm run build && node dist/src/cli.js release-check --format json"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
