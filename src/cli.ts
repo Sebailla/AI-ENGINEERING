@@ -4,16 +4,17 @@ import { doctor } from "./commands/doctor.js";
 import { conformance } from "./commands/conformance.js";
 import { packageAudit } from "./commands/package-audit.js";
 import { releaseCheck } from "./commands/release-check.js";
+import { UiToolingProfile } from "./core/types.js";
 
 function usage(): string {
-  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check [--cwd <project>] [--runtime <name>]... [--dry-run] [--force] [--format text|json]";
+  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check [--cwd <project>] [--runtime <name>]... [--ui-tooling manual|impeccable|stitch|full] [--dry-run] [--force] [--format text|json]";
 }
 
 async function main(): Promise<void> {
   const [command, ...arguments_] = process.argv.slice(2);
   if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit" && command !== "release-check") throw new Error(usage());
 
-  const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, force: false, format: "text" };
+  const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, force: false, format: "text", uiTooling: "manual" as UiToolingProfile };
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
     const value = arguments_[index + 1];
@@ -21,6 +22,7 @@ async function main(): Promise<void> {
     else if (argument === "--runtime" && value) { options.runtimes.push(value); index += 1; }
     else if (argument === "--dry-run") options.dryRun = true;
     else if (argument === "--force") options.force = true;
+    else if (argument === "--ui-tooling" && value && ["manual", "impeccable", "stitch", "full"].includes(value)) { options.uiTooling = value as UiToolingProfile; index += 1; }
     else if (argument === "--format" && (value === "text" || value === "json")) { options.format = value; index += 1; }
     else throw new Error(`Unknown or incomplete argument: ${argument}`);
   }
@@ -77,6 +79,7 @@ async function main(): Promise<void> {
     console.log(`init: ${report.complete ? "complete" : "incomplete"}${report.dryRun ? " (dry run)" : ""}`);
     for (const entry of report.entries) console.log(`${entry.action}: ${entry.path} — ${entry.reason}`);
     for (const warning of report.warnings) console.log(`warning: ${warning}`);
+    for (const step of report.uiTooling.steps) console.log(`ui-tooling: ${step.id} ${step.action} — ${step.verification}`);
   }
   if (!report.complete) process.exitCode = 2;
 }
