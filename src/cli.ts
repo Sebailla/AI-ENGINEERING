@@ -5,22 +5,24 @@ import { conformance } from "./commands/conformance.js";
 import { packageAudit } from "./commands/package-audit.js";
 import { releaseCheck } from "./commands/release-check.js";
 import { UiToolingProfile } from "./core/types.js";
+import { uiToolingApply } from "./commands/ui-tooling-apply.js";
 
 function usage(): string {
-  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check [--cwd <project>] [--runtime <name>]... [--ui-tooling manual|impeccable|stitch|full] [--dry-run] [--force] [--format text|json]";
+  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check|ui-tooling-apply [--cwd <project>] [--runtime <name>]... [--ui-tooling manual|impeccable|stitch|full] [--dry-run] [--apply] [--force] [--format text|json]";
 }
 
 async function main(): Promise<void> {
   const [command, ...arguments_] = process.argv.slice(2);
-  if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit" && command !== "release-check") throw new Error(usage());
+  if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit" && command !== "release-check" && command !== "ui-tooling-apply") throw new Error(usage());
 
-  const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, force: false, format: "text", uiTooling: "manual" as UiToolingProfile };
+  const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, apply: false, force: false, format: "text", uiTooling: "manual" as UiToolingProfile };
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
     const value = arguments_[index + 1];
     if (argument === "--cwd" && value) { options.cwd = value; index += 1; }
     else if (argument === "--runtime" && value) { options.runtimes.push(value); index += 1; }
     else if (argument === "--dry-run") options.dryRun = true;
+    else if (argument === "--apply") options.apply = true;
     else if (argument === "--force") options.force = true;
     else if (argument === "--ui-tooling" && value && ["manual", "impeccable", "stitch", "full"].includes(value)) { options.uiTooling = value as UiToolingProfile; index += 1; }
     else if (argument === "--format" && (value === "text" || value === "json")) { options.format = value; index += 1; }
@@ -68,6 +70,17 @@ async function main(): Promise<void> {
     else {
       console.log(`release-check: ${report.complete ? "complete" : "incomplete"} (${report.version})`);
       for (const error of report.errors) console.log(`error: ${error}`);
+    }
+    if (!report.complete) process.exitCode = 2;
+    return;
+  }
+
+  if (command === "ui-tooling-apply") {
+    const report = await uiToolingApply({ cwd: options.cwd, profile: options.uiTooling, confirmed: options.apply });
+    if (options.format === "json") console.log(JSON.stringify(report));
+    else {
+      console.log(`ui-tooling-apply: ${report.complete ? "complete" : "blocked"}`);
+      for (const receipt of report.receipts) console.log(`${receipt.status}: ${receipt.id} — ${receipt.verification} — ${receipt.evidence}`);
     }
     if (!report.complete) process.exitCode = 2;
     return;

@@ -64,3 +64,19 @@ export interface UiToolingPlan {
   steps: UiToolingStep[];
   fallback: "MANUAL_FALLBACK";
 }
+
+export interface UiToolingReceipt {
+  id: "impeccable" | "stitch";
+  command?: string;
+  status: "APPLIED" | "BLOCKED" | "FAILED";
+  verification: VerificationStatus;
+  evidence: string;
+}
+
+export interface UiToolingApplyReport {
+  profile: UiToolingProfile;
+  confirmed: boolean;
+  complete: boolean;
+  receipts: UiToolingReceipt[];
+  fallback: "MANUAL_FALLBACK";
+}
