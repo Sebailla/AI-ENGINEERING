@@ -55,7 +55,7 @@ export class UiWorkflow {
     return this.current;
   }
 
-  private block(reason: string): UiWorkflowSnapshot {
+  block(reason: string): UiWorkflowSnapshot {
     this.snapshot = { ...this.snapshot, state: "BLOCKED", blockedFrom: this.snapshot.state, blockReason: reason };
     return this.current;
   }
