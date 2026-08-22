@@ -1,4 +1,6 @@
-export const HARNESS_VERSION = "0.1.0";
+import { PACKAGE_METADATA } from "./package-metadata.js";
+
+export const HARNESS_VERSION = PACKAGE_METADATA.version;
 export const STATE_SCHEMA_VERSION = 1;
 
 export const SUPPORTED_RUNTIMES = ["codex", "claude-code", "opencode", "pi"] as const;

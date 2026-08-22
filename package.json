@@ -4,14 +4,15 @@
   "private": true,
   "description": "Portable bootstrap harness for AI engineering projects",
   "type": "module",
-  "files": ["dist", "templates"],
+  "files": ["dist/src", "templates"],
   "bin": {
     "ai-engineering": "dist/src/cli.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "pnpm run build && node --test dist/test/*.test.js"
+    "test": "pnpm run build && node --test dist/test/*.test.js",
+    "package:audit": "pnpm run build && node dist/src/cli.js package-audit --format json"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
