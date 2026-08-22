@@ -42,4 +42,25 @@ export interface InitReport {
   complete: boolean;
   entries: PlanEntry[];
   warnings: string[];
+  uiTooling: UiToolingPlan;
+}
+
+export type UiToolingProfile = "manual" | "impeccable" | "stitch" | "full";
+export type UiToolingAction = "preserve" | "external" | "blocked";
+export type VerificationStatus = "VERIFICADO" | "NO_VERIFICADO" | "BLOQUEADO";
+
+export interface UiToolingStep {
+  id: "impeccable" | "stitch";
+  action: UiToolingAction;
+  owner: "harness" | "gentle-ai" | "external";
+  command?: string;
+  requiredEnv: string[];
+  verification: VerificationStatus;
+  reason: string;
+}
+
+export interface UiToolingPlan {
+  profile: UiToolingProfile;
+  steps: UiToolingStep[];
+  fallback: "MANUAL_FALLBACK";
 }
