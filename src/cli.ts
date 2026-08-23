@@ -6,14 +6,15 @@ import { packageAudit } from "./commands/package-audit.js";
 import { releaseCheck } from "./commands/release-check.js";
 import { UiToolingProfile } from "./core/types.js";
 import { uiToolingApply } from "./commands/ui-tooling-apply.js";
+import { stitchVerify } from "./commands/stitch-verify.js";
 
 function usage(): string {
-  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check|ui-tooling-apply [--cwd <project>] [--runtime <name>]... [--ui-tooling manual|impeccable|stitch|full] [--dry-run] [--apply] [--force] [--format text|json]";
+  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check|ui-tooling-apply|stitch-verify [--cwd <project>] [--runtime <name>]... [--ui-tooling manual|impeccable|stitch|full] [--dry-run] [--apply] [--force] [--format text|json]";
 }
 
 async function main(): Promise<void> {
   const [command, ...arguments_] = process.argv.slice(2);
-  if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit" && command !== "release-check" && command !== "ui-tooling-apply") throw new Error(usage());
+  if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit" && command !== "release-check" && command !== "ui-tooling-apply" && command !== "stitch-verify") throw new Error(usage());
 
   const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, apply: false, force: false, format: "text", uiTooling: "manual" as UiToolingProfile };
   for (let index = 0; index < arguments_.length; index += 1) {
@@ -83,6 +84,20 @@ async function main(): Promise<void> {
       for (const receipt of report.receipts) console.log(`${receipt.status}: ${receipt.id} — ${receipt.verification} — ${receipt.evidence}`);
     }
     if (!report.complete) process.exitCode = 2;
+    return;
+  }
+
+  if (command === "stitch-verify") {
+    const report = await stitchVerify();
+    if (options.format === "json") console.log(JSON.stringify(report));
+    else {
+      console.log(`stitch-verify: ${report.status}`);
+      console.log(`endpoint: ${report.endpoint}`);
+      console.log(`auth: ${report.authMode}`);
+      console.log(`tools: ${report.toolCount}`);
+      console.log(`evidence: ${report.evidence}`);
+    }
+    if (report.status !== "VERIFICADO") process.exitCode = 2;
     return;
   }
 
