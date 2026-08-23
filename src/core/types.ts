@@ -48,6 +48,16 @@ export interface InitReport {
 export type UiToolingProfile = "manual" | "impeccable" | "stitch" | "full";
 export type UiToolingAction = "preserve" | "external" | "blocked";
 export type VerificationStatus = "VERIFICADO" | "NO_VERIFICADO" | "BLOQUEADO";
+export type StitchAuthMode = "api-key" | "oauth" | "missing";
+
+export interface StitchConnectionPlan {
+  endpoint: string;
+  authMode: StitchAuthMode;
+  owner: "gentle-ai";
+  registration: "DELEGATED";
+  requiredEnv: string[];
+  verification: "NO_VERIFICADO";
+}
 
 export interface UiToolingStep {
   id: "impeccable" | "stitch";
@@ -57,6 +67,7 @@ export interface UiToolingStep {
   requiredEnv: string[];
   verification: VerificationStatus;
   reason: string;
+  connection?: StitchConnectionPlan;
 }
 
 export interface UiToolingPlan {

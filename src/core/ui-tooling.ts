@@ -1,4 +1,5 @@
 import { UiToolingPlan, UiToolingProfile, UiToolingStep } from "./types.js";
+import { planStitchConnection } from "./stitch-remote-plan.js";
 
 export const IMPECCABLE_VERSION = "4.1.1";
 export const IMPECCABLE_INSTALL_COMMAND = `npx impeccable@${IMPECCABLE_VERSION} install --scope=project`;
@@ -31,6 +32,7 @@ function stepFor(id: "impeccable" | "stitch", environment: NodeJS.ProcessEnv): U
   const hasApiKey = Boolean(environment.STITCH_API_KEY);
   const hasAccessToken = Boolean(environment.STITCH_ACCESS_TOKEN && environment.GOOGLE_CLOUD_PROJECT);
   const credentialsReady = hasApiKey || hasAccessToken;
+  const connection = planStitchConnection(environment);
   return {
     id,
     action: credentialsReady ? "external" : "blocked",
@@ -40,5 +42,6 @@ function stepFor(id: "impeccable" | "stitch", environment: NodeJS.ProcessEnv): U
     reason: credentialsReady
       ? "Credentials are present, but runtime MCP registration and a live tool call still require Gentle-AI verification."
       : "Stitch credentials are missing; preserve the manual fallback and do not register an unverified MCP.",
+    connection,
   };
 }
