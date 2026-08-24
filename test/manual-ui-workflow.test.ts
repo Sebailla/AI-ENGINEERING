@@ -12,7 +12,7 @@ test("manual fallback reaches delivery with explicit artifact and audit receipts
   flow.startApply();
   flow.recordApplied("rev-1");
   flow.startAudit();
-  flow.recordAudit({ candidateId: "candidate-1", revision: "rev-1", auditId: "audit-1", status: "VERIFICADO", source: "MANUAL_FALLBACK" });
+  flow.recordAudit({ candidateId: "candidate-1", revision: "rev-1", auditId: "audit-1", auditorVersion: "manual-audit-v1", status: "VERIFICADO", source: "MANUAL_FALLBACK" });
   const result = flow.prepareDelivery();
   assert.equal(result.workflow.state, "DELIVERY_READY");
   assert.equal(result.mode, "MANUAL_FALLBACK");
@@ -34,6 +34,6 @@ test("manual fallback rejects mismatched audit receipts", () => {
   flow.startApply();
   flow.recordApplied("rev-1");
   flow.startAudit();
-  const result = flow.recordAudit({ candidateId: "candidate-1", revision: "rev-other", auditId: "audit-1", status: "VERIFICADO", source: "MANUAL_FALLBACK" });
+  const result = flow.recordAudit({ candidateId: "candidate-1", revision: "rev-other", auditId: "audit-1", auditorVersion: "manual-audit-v1", status: "VERIFICADO", source: "MANUAL_FALLBACK" });
   assert.equal(result.workflow.state, "BLOCKED");
 });

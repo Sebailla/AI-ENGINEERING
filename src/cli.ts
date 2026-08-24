@@ -7,16 +7,17 @@ import { releaseCheck } from "./commands/release-check.js";
 import { UiToolingProfile } from "./core/types.js";
 import { uiToolingApply } from "./commands/ui-tooling-apply.js";
 import { stitchVerify } from "./commands/stitch-verify.js";
+import { impeccableVerify } from "./commands/impeccable-verify.js";
 
 function usage(): string {
-  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check|ui-tooling-apply|stitch-verify [--cwd <project>] [--runtime <name>]... [--ui-tooling manual|impeccable|stitch|full] [--dry-run] [--apply] [--force] [--format text|json]";
+  return "Usage: ai-engineering init|doctor|conformance|package-audit|release-check|ui-tooling-apply|stitch-verify|impeccable-verify [--candidate <id>] [--revision <revision>] [--cwd <project>] [--runtime <name>]... [--ui-tooling manual|impeccable|stitch|full] [--dry-run] [--apply] [--force] [--format text|json]";
 }
 
 async function main(): Promise<void> {
   const [command, ...arguments_] = process.argv.slice(2);
-  if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit" && command !== "release-check" && command !== "ui-tooling-apply" && command !== "stitch-verify") throw new Error(usage());
+  if (command !== "init" && command !== "doctor" && command !== "conformance" && command !== "package-audit" && command !== "release-check" && command !== "ui-tooling-apply" && command !== "stitch-verify" && command !== "impeccable-verify") throw new Error(usage());
 
-  const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, apply: false, force: false, format: "text", uiTooling: "manual" as UiToolingProfile };
+  const options = { cwd: process.cwd(), runtimes: [] as string[], dryRun: false, apply: false, force: false, format: "text", uiTooling: "manual" as UiToolingProfile, candidateId: "", revision: "" };
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
     const value = arguments_[index + 1];
@@ -25,6 +26,8 @@ async function main(): Promise<void> {
     else if (argument === "--dry-run") options.dryRun = true;
     else if (argument === "--apply") options.apply = true;
     else if (argument === "--force") options.force = true;
+    else if (argument === "--candidate" && value) { options.candidateId = value; index += 1; }
+    else if (argument === "--revision" && value) { options.revision = value; index += 1; }
     else if (argument === "--ui-tooling" && value && ["manual", "impeccable", "stitch", "full"].includes(value)) { options.uiTooling = value as UiToolingProfile; index += 1; }
     else if (argument === "--format" && (value === "text" || value === "json")) { options.format = value; index += 1; }
     else throw new Error(`Unknown or incomplete argument: ${argument}`);
@@ -96,6 +99,20 @@ async function main(): Promise<void> {
       console.log(`auth: ${report.authMode}`);
       console.log(`tools: ${report.toolCount}`);
       console.log(`evidence: ${report.evidence}`);
+    }
+    if (report.status !== "VERIFICADO") process.exitCode = 2;
+    return;
+  }
+
+  if (command === "impeccable-verify") {
+    if (!options.candidateId || !options.revision) throw new Error("impeccable-verify requires --candidate and --revision.");
+    const report = await impeccableVerify({ candidateId: options.candidateId, revision: options.revision });
+    if (options.format === "json") console.log(JSON.stringify(report));
+    else {
+      console.log(`impeccable-verify: ${report.status}`);
+      console.log(`source: ${report.source}`);
+      console.log(`evidence: ${report.evidence}`);
+      console.log(`remediation: ${report.remediation}`);
     }
     if (report.status !== "VERIFICADO") process.exitCode = 2;
     return;
