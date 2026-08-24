@@ -10,7 +10,7 @@ test("UI workflow requires client confirmation and a verified audit before deliv
   workflow.startApply();
   workflow.recordApplied("revision-1");
   workflow.startAudit();
-  workflow.recordAudit({ auditId: "audit-1", revision: "revision-1", auditVersion: "4.1.1", status: "VERIFICADO" });
+  workflow.recordAudit({ candidateId: "candidate-1", auditId: "audit-1", source: "IMPECCABLE_MCP", auditorVersion: "4.1.1", revision: "revision-1", status: "VERIFICADO" });
   assert.equal(workflow.prepareDelivery().state, "DELIVERY_READY");
 });
 
@@ -38,7 +38,7 @@ test("an unverified audit blocks delivery", () => {
   workflow.startApply();
   workflow.recordApplied("revision-1");
   workflow.startAudit();
-  assert.equal(workflow.recordAudit({ auditId: "audit-1", revision: "revision-1", auditVersion: "4.1.1", status: "NO_VERIFICADO" }).state, "BLOCKED");
+  assert.equal(workflow.recordAudit({ candidateId: "candidate-1", auditId: "audit-1", source: "IMPECCABLE_MCP", auditorVersion: "4.1.1", revision: "revision-1", status: "NO_VERIFICADO" }).state, "BLOCKED");
 });
 
 test("audit evidence cannot authorize delivery for another applied revision", () => {
@@ -49,5 +49,28 @@ test("audit evidence cannot authorize delivery for another applied revision", ()
   workflow.startApply();
   workflow.recordApplied("revision-1");
   workflow.startAudit();
-  assert.equal(workflow.recordAudit({ auditId: "audit-1", revision: "revision-other", auditVersion: "4.1.1", status: "VERIFICADO" }).state, "BLOCKED");
+  assert.equal(workflow.recordAudit({ candidateId: "candidate-1", auditId: "audit-1", source: "IMPECCABLE_MCP", auditorVersion: "4.1.1", revision: "revision-other", status: "VERIFICADO" }).state, "BLOCKED");
+});
+
+test("audit evidence cannot authorize delivery for another candidate", () => {
+  const workflow = new UiWorkflow("candidate-1");
+  workflow.dispatchPrompt("prompt-1"); workflow.awaitClientConfirmation(); workflow.confirmClient("prompt-1");
+  workflow.startApply(); workflow.recordApplied("revision-1"); workflow.startAudit();
+  assert.equal(workflow.recordAudit({ candidateId: "candidate-other", auditId: "audit-1", source: "IMPECCABLE_MCP", auditorVersion: "4.1.1", revision: "revision-1", status: "VERIFICADO" }).state, "BLOCKED");
+});
+
+test("audit receipts require bound identities and non-blank verifier evidence", () => {
+  const workflow = new UiWorkflow("candidate-1");
+  workflow.dispatchPrompt("prompt-1"); workflow.awaitClientConfirmation(); workflow.confirmClient("prompt-1");
+  workflow.startApply(); workflow.recordApplied("revision-1"); workflow.startAudit();
+  const result = workflow.recordAudit({ candidateId: " ", auditId: "audit-1", revision: "revision-1", auditorVersion: "4.1.1", source: "IMPECCABLE_MCP", status: "VERIFICADO" });
+  assert.equal(result.state, "BLOCKED");
+});
+
+test("audit receipts require known verifier provenance", () => {
+  const workflow = new UiWorkflow("candidate-1");
+  workflow.dispatchPrompt("prompt-1"); workflow.awaitClientConfirmation(); workflow.confirmClient("prompt-1");
+  workflow.startApply(); workflow.recordApplied("revision-1"); workflow.startAudit();
+  const result = workflow.recordAudit({ candidateId: "candidate-1", auditId: "audit-1", revision: "revision-1", auditorVersion: "4.1.1", source: "UNVERIFIED" as never, status: "VERIFICADO" });
+  assert.equal(result.state, "BLOCKED");
 });
