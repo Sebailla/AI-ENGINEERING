@@ -13,9 +13,11 @@ export interface UiWorkflowSnapshot {
 }
 
 export interface UiAuditReceipt {
+  candidateId: string;
   auditId: string;
   revision: string;
-  auditVersion: string;
+  auditorVersion: string;
+  source: "IMPECCABLE_MCP" | "MANUAL_FALLBACK";
   status: "VERIFICADO" | "NO_VERIFICADO" | "FALLIDO";
 }
 
@@ -49,11 +51,13 @@ export class UiWorkflow {
   startAudit(): UiWorkflowSnapshot { return this.move("AUDITING", ["APPLIED"]); }
 
   recordAudit(receipt: UiAuditReceipt): UiWorkflowSnapshot {
-    if (receipt.revision !== this.snapshot.appliedRevision || !receipt.auditId || !receipt.auditVersion) {
-      return this.block("Audit receipt does not match the applied candidate revision or lacks an auditor version.");
+    if (receipt.candidateId !== this.snapshot.candidateId || receipt.revision !== this.snapshot.appliedRevision ||
+      ![receipt.candidateId, receipt.revision, receipt.auditId, receipt.auditorVersion].every((value) => value.trim()) ||
+      (receipt.source !== "IMPECCABLE_MCP" && receipt.source !== "MANUAL_FALLBACK")) {
+      return this.block("Audit receipt does not match the applied candidate revision or lacks verifier provenance.");
     }
     if (receipt.status !== "VERIFICADO") return this.block(`Impeccable audit is ${receipt.status}; delivery remains blocked.`);
-    return this.move("AUDITED", ["AUDITING"], { auditId: receipt.auditId, auditVersion: receipt.auditVersion });
+    return this.move("AUDITED", ["AUDITING"], { auditId: receipt.auditId, auditVersion: receipt.auditorVersion });
   }
 
   prepareDelivery(): UiWorkflowSnapshot {

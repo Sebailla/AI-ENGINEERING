@@ -39,3 +39,14 @@ test("Impeccable verification rejects a receipt for another revision", async () 
   const report = await verifyImpeccableAudit(request, fakeClient({ auditId: "audit-1", candidateId: "candidate-1", revision: "rev-other", status: "VERIFICADO", impeccableVersion: "4.1.1" }));
   assert.equal(report.status, "NO_VERIFICADO");
 });
+
+test("Impeccable verification times out and closes a never-settling bridge", async () => {
+  let closed = false;
+  const report = await verifyImpeccableAudit(request, {
+    audit: () => new Promise<ImpeccableAuditResult>(() => undefined),
+    async close() { closed = true; },
+  });
+  assert.equal(report.status, "FALLIDO");
+  assert.equal(closed, true);
+  assert.match(report.evidence, /timed out/i);
+});

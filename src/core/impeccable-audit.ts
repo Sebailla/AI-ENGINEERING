@@ -1,5 +1,7 @@
 import { CheckStatus } from "./report.js";
 
+const AUDIT_TIMEOUT_MS = 5_000;
+
 export interface ImpeccableAuditRequest {
   candidateId: string;
   revision: string;
@@ -48,12 +50,12 @@ export async function verifyImpeccableAudit(
       source: "EXTERNAL_BLOCKER",
       findings: [],
       evidence: "No runtime-provided Impeccable MCP bridge is available; no audit call was attempted.",
-      remediation: "Configure Impeccable through Gentle-AI, then rerun the candidate-bound read-only audit.",
+      remediation: "The public CLI is blocker-only; a verified runtime adapter must provide the read-only bridge before an audit can run.",
     };
   }
 
   try {
-    const result = await client.audit(request);
+    const result = await withTimeout(client.audit(request));
     const isBound = result.candidateId === request.candidateId && result.revision === request.revision;
     const isComplete = Boolean(result.auditId && result.impeccableVersion);
     const status: CheckStatus = result.status === "FALLIDO"
@@ -89,6 +91,14 @@ export async function verifyImpeccableAudit(
   } finally {
     await client.close().catch(() => undefined);
   }
+}
+
+function withTimeout<T>(operation: Promise<T>): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout>;
+  return Promise.race([
+    operation,
+    new Promise<T>((_, reject) => { timeout = setTimeout(() => reject(new Error(`Impeccable audit timed out after ${AUDIT_TIMEOUT_MS}ms.`)), AUDIT_TIMEOUT_MS); }),
+  ]).finally(() => clearTimeout(timeout!));
 }
 
 function redact(value: string): string {

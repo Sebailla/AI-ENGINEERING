@@ -79,7 +79,7 @@ export class ManualUiWorkflow {
       return this.block("Audit receipt does not match the applied candidate or fallback source.");
     }
     this.audit = { ...receipt };
-    this.workflow.recordAudit({ auditId: receipt.auditId, revision: receipt.revision, auditVersion: receipt.auditorVersion, status: receipt.status });
+    this.workflow.recordAudit(receipt);
     return this.current;
   }
 
