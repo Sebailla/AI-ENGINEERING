@@ -7,8 +7,16 @@ export interface UiWorkflowSnapshot {
   confirmedPromptId?: string;
   appliedRevision?: string;
   auditId?: string;
+  auditVersion?: string;
   blockedFrom?: UiWorkflowState;
   blockReason?: string;
+}
+
+export interface UiAuditReceipt {
+  auditId: string;
+  revision: string;
+  auditVersion: string;
+  status: "VERIFICADO" | "NO_VERIFICADO" | "FALLIDO";
 }
 
 export class UiWorkflow {
@@ -40,9 +48,12 @@ export class UiWorkflow {
 
   startAudit(): UiWorkflowSnapshot { return this.move("AUDITING", ["APPLIED"]); }
 
-  recordAudit(auditId: string, status: "VERIFICADO" | "NO_VERIFICADO" | "FALLIDO"): UiWorkflowSnapshot {
-    if (status !== "VERIFICADO") return this.block(`Impeccable audit is ${status}; delivery remains blocked.`);
-    return this.move("AUDITED", ["AUDITING"], { auditId });
+  recordAudit(receipt: UiAuditReceipt): UiWorkflowSnapshot {
+    if (receipt.revision !== this.snapshot.appliedRevision || !receipt.auditId || !receipt.auditVersion) {
+      return this.block("Audit receipt does not match the applied candidate revision or lacks an auditor version.");
+    }
+    if (receipt.status !== "VERIFICADO") return this.block(`Impeccable audit is ${receipt.status}; delivery remains blocked.`);
+    return this.move("AUDITED", ["AUDITING"], { auditId: receipt.auditId, auditVersion: receipt.auditVersion });
   }
 
   prepareDelivery(): UiWorkflowSnapshot {

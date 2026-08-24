@@ -11,6 +11,7 @@ export interface ManualAuditReceipt {
   candidateId: string;
   revision: string;
   auditId: string;
+  auditorVersion: string;
   status: "VERIFICADO" | "NO_VERIFICADO" | "FALLIDO";
   source: "MANUAL_FALLBACK";
 }
@@ -78,7 +79,7 @@ export class ManualUiWorkflow {
       return this.block("Audit receipt does not match the applied candidate or fallback source.");
     }
     this.audit = { ...receipt };
-    this.workflow.recordAudit(receipt.auditId, receipt.status);
+    this.workflow.recordAudit({ auditId: receipt.auditId, revision: receipt.revision, auditVersion: receipt.auditorVersion, status: receipt.status });
     return this.current;
   }
 
