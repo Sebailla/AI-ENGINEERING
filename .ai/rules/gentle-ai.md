@@ -6,7 +6,7 @@ Esta regla aplica a cualquier proyecto que adopte la base. El producto, su stack
 
 ## Ruta rápida
 
-1. Instalá y configurá los runtimes que realmente vayas a usar mediante Gentle-AI.
+1. Instalá y configurá mediante Gentle-AI únicamente los runtimes que realmente vayas a usar, seleccionándolos explícitamente con `--agent`.
 2. Proyectá `.ai/SYSTEM.md` y las reglas de proyecto mediante el adapter correspondiente antes de delegar o ejecutar trabajo.
 3. Elegí el scope conscientemente: global para preferencias personales; workspace para assets propios de un proyecto.
 4. Antes de actualizar, verificá versión, impacto y plan con `update`, notas de release y `sync --dry-run`.
@@ -34,6 +34,17 @@ Elegí el scope según la propiedad del comportamiento:
 - **Global:** persona personal, configuración de una herramienta usada por todos los proyectos y componentes que el runtime sólo admite globalmente.
 - **Workspace:** system prompt, skills, agentes SDD y otros assets que deban viajar con un proyecto y ser revisables en Git.
 - **Global obligatorio:** paquetes o settings que el runtime no lee desde el workspace. Su existencia debe documentarse, no simularse como portable.
+
+### Selección explícita de runtimes
+
+Antes de instalar assets de workspace, declará los runtimes que el proyecto va a usar y pasalos de forma explícita a `--agent`. No instales todos los adapters soportados como valor por defecto ni para “cubrir posibilidades”.
+
+```bash
+# Proyecto que usa sólo Pi
+gentle-ai install --scope workspace --agent pi --preset full-gentleman --persona gentleman
+```
+
+Una selección múltiple sólo es válida cuando el proyecto utiliza cada runtime enumerado. Previsualizá el plan con `--dry-run` y verificá que la lista de agentes y los directorios workspace coincidan con esa selección. Los assets generados conservan ownership de Gentle-AI: no los recortes manualmente para corregir una selección demasiado amplia.
 
 `~/.gentle-ai/state.json` es el registro operativo de los agentes seleccionados por la instalación. Por eso `sync` actualiza **sólo** los agentes registrados allí, salvo que se indiquen explícitamente con `--agent`.
 
